@@ -1,17 +1,231 @@
 ﻿@{
-    ViewBag.Title = "Contact";
+    ViewBag.Title = "Home Test Page";
 }
-<h2>@ViewBag.Title.</h2>
-<h3>@ViewBag.Message</h3>
 
-<address>
-    One Microsoft Way<br />
-    Redmond, WA 98052-6399<br />
-    <abbr title="Phone">P:</abbr>
-    425.555.0100
-</address>
+<style>
+    #exTab3 .nav-pills > li > a {
+        border-radius: 0 0 0 0;
+    }
 
-<address>
-    <strong>Support:</strong>   <a href="mailto:Support@example.com">Support@example.com</a><br />
-    <strong>Marketing:</strong> <a href="mailto:Marketing@example.com">Marketing@example.com</a>
-</address>
+    #exTab3 .tab-content {
+        color: black;
+        background-color: white;
+        /*padding : 5px 15px;*/
+    }
+
+    .carousel-inner > .item > img,
+    .carousel-inner > .item > a > img {
+        width: 70%;
+        margin: auto;
+    }
+
+    .MainContainer {
+        width: 98%;
+        position: relative;
+        min-width: 600px;
+        margin: auto;
+        margin-top: 2px;
+        /*float: right;*/
+        border: 1px solid #294850;
+        background-color: whitesmoke;
+        clear: both;
+        overflow: auto;
+    }
+
+    .MainContainerHolder {
+        position: relative;
+        float: none;
+        width: 100%;
+        border-top: 1px solid #294850;
+    }
+</style>
+<div class="MainContainer">
+    <div class="MainContainerHolder">
+        <div class="MainContainerLeftSideBar" style="position:relative;  width:98%; min-height:590px; background-color:ghostwhite; margin-top:1px; border-top-left-radius:2px ;padding:1%">
+            <div class="row" style="position:relative;  margin:0px; margin-top:5px;">
+                <div class="panel panel-info" style="border-color:#173740; ">
+                    <div class="panel-heading" style="background-color:#173740; color:whitesmoke">
+                        <div class="row" style="padding:0px 25px 0px 0px; margin-left:0px">
+                            <div class="col-sm-1">Sr Number </div>
+                            <div class="col-sm-1">QOS</div>
+                            <div class="col-sm-1">Survey Date </div>
+                            <div class="col-sm-2">POD Name</div>
+                            <div class="col-sm-1">SrCreateDate </div>
+                            <div class="col-sm-1">SR DTS</div>
+                            <div class="col-sm-1">SR DTC</div>
+                            <div class="col-sm-1">IR Miss?</div>
+                            <div class="col-sm-2">QualityAnalystName </div>
+                            <div class="col-sm-1">   Status  </div>
+                        </div>
+                    </div>
+                    <div class="panel-body" style="max-height: 580px; overflow-y: auto; font-size:12px">
+
+                        <div class="list-group">
+                            <a class="list-group-item" href="#">
+                                <div class="row" style="margin-top:5px; ">
+                                    <div class="col-sm-1" style="background-color:lavender;">117070515992182 </div>
+                                    <div class="col-sm-1">MB</div>
+                                    <div class="col-sm-1" style="background-color:lavender;">21-June-2017</div>
+                                    <div class="col-sm-2">Azure App Service </div>
+                                    <div class="col-sm-1" style="background-color:lavender;">1-June-2017</div>
+                                    <div class="col-sm-1">15</div>
+                                    <div class="col-sm-1" style="background-color:lavender;">20 </div>
+                                    <div class="col-sm-1">No</div>
+                                    <div class="col-sm-2">Amit Tripathi</div>
+                                    <div class="col-sm-1" style="background-color:lavender;">Completed</div>
+
+                                </div>
+                            </a>
+                            <a class="list-group-item" href="#">
+                                <div class="row" style="margin-top:5px; ">
+                                    <div class="col-sm-1" style="background-color:lavender;">117070515992182 </div>
+                                    <div class="col-sm-1">MB</div>
+                                    <div class="col-sm-1" style="background-color:lavender;">21-June-2017</div>
+                                    <div class="col-sm-2">Azure App Service </div>
+                                    <div class="col-sm-1" style="background-color:lavender;">1-June-2017</div>
+                                    <div class="col-sm-1">15</div>
+                                    <div class="col-sm-1" style="background-color:lavender;">20 </div>
+                                    <div class="col-sm-1">No</div>
+                                    <div class="col-sm-2">Amit Tripathi</div>
+                                    <div class="col-sm-1" style="background-color:lavender;">Completed</div>
+
+                                </div>
+                            </a>
+
+                            <a class="list-group-item" href="#">
+                                <div class="row" style="margin-top:5px; ">
+                                    <div class="col-sm-1" style="background-color:lavender;">117070515992182 </div>
+                                    <div class="col-sm-1">MB</div>
+                                    <div class="col-sm-1" style="background-color:lavender;">21-June-2017</div>
+                                    <div class="col-sm-2">Azure App Service </div>
+                                    <div class="col-sm-1" style="background-color:lavender;">1-June-2017</div>
+                                    <div class="col-sm-1">15</div>
+                                    <div class="col-sm-1" style="background-color:lavender;">20 </div>
+                                    <div class="col-sm-1">No</div>
+                                    <div class="col-sm-2">Amit Tripathi</div>
+                                    <div class="col-sm-1" style="background-color:lavender;">Completed</div>
+
+                                </div>
+                            </a>
+
+                            <a class="list-group-item" href="#">
+                                <div class="row" style="margin-top:5px; ">
+                                    <div class="col-sm-1" style="background-color:lavender;">117070515992182 </div>
+                                    <div class="col-sm-1">MB</div>
+                                    <div class="col-sm-1" style="background-color:lavender;">21-June-2017</div>
+                                    <div class="col-sm-2">Azure App Service </div>
+                                    <div class="col-sm-1" style="background-color:lavender;">1-June-2017</div>
+                                    <div class="col-sm-1">15</div>
+                                    <div class="col-sm-1" style="background-color:lavender;">20 </div>
+                                    <div class="col-sm-1">No</div>
+                                    <div class="col-sm-2">Amit Tripathi</div>
+                                    <div class="col-sm-1" style="background-color:lavender;">Completed</div>
+
+                                </div>
+                            </a>
+                            <a class="list-group-item" href="#">
+                                <div class="row" style="margin-top:5px; ">
+                                    <div class="col-sm-1" style="background-color:lavender;">117070515992182 </div>
+                                    <div class="col-sm-1">MB</div>
+                                    <div class="col-sm-1" style="background-color:lavender;">21-June-2017</div>
+                                    <div class="col-sm-2">Azure App Service </div>
+                                    <div class="col-sm-1" style="background-color:lavender;">1-June-2017</div>
+                                    <div class="col-sm-1">15</div>
+                                    <div class="col-sm-1" style="background-color:lavender;">20 </div>
+                                    <div class="col-sm-1">No</div>
+                                    <div class="col-sm-2">Amit Tripathi</div>
+                                    <div class="col-sm-1" style="background-color:lavender;">Completed</div>
+
+                                </div>
+                            </a>
+                            <a class="list-group-item" href="#">
+                                <div class="row" style="margin-top:5px; ">
+                                    <div class="col-sm-1" style="background-color:lavender;">117070515992182 </div>
+                                    <div class="col-sm-1">MB</div>
+                                    <div class="col-sm-1" style="background-color:lavender;">21-June-2017</div>
+                                    <div class="col-sm-2">Azure App Service </div>
+                                    <div class="col-sm-1" style="background-color:lavender;">1-June-2017</div>
+                                    <div class="col-sm-1">15</div>
+                                    <div class="col-sm-1" style="background-color:lavender;">20 </div>
+                                    <div class="col-sm-1">No</div>
+                                    <div class="col-sm-2">Amit Tripathi</div>
+                                    <div class="col-sm-1" style="background-color:lavender;">Completed</div>
+
+                                </div>
+                            </a>
+                            <a class="list-group-item" href="#">
+                                <div class="row" style="margin-top:5px; ">
+                                    <div class="col-sm-1" style="background-color:lavender;">117070515992182 </div>
+                                    <div class="col-sm-1">MB</div>
+                                    <div class="col-sm-1" style="background-color:lavender;">21-June-2017</div>
+                                    <div class="col-sm-2">Azure App Service </div>
+                                    <div class="col-sm-1" style="background-color:lavender;">1-June-2017</div>
+                                    <div class="col-sm-1">15</div>
+                                    <div class="col-sm-1" style="background-color:lavender;">20 </div>
+                                    <div class="col-sm-1">No</div>
+                                    <div class="col-sm-2">Amit Tripathi</div>
+                                    <div class="col-sm-1" style="background-color:lavender;">Completed</div>
+
+                                </div>
+                            </a>
+                            <a class="list-group-item" href="#">
+                                <div class="row" style="margin-top:5px; ">
+                                    <div class="col-sm-1" style="background-color:lavender;">117070515992182 </div>
+                                    <div class="col-sm-1">MB</div>
+                                    <div class="col-sm-1" style="background-color:lavender;">21-June-2017</div>
+                                    <div class="col-sm-2">Azure App Service </div>
+                                    <div class="col-sm-1" style="background-color:lavender;">1-June-2017</div>
+                                    <div class="col-sm-1">15</div>
+                                    <div class="col-sm-1" style="background-color:lavender;">20 </div>
+                                    <div class="col-sm-1">No</div>
+                                    <div class="col-sm-2">Amit Tripathi</div>
+                                    <div class="col-sm-1" style="background-color:lavender;">Completed</div>
+
+                                </div>
+                            </a>
+                            <a class="list-group-item" href="#">
+                                <div class="row" style="margin-top:5px; ">
+                                    <div class="col-sm-1" style="background-color:lavender;">117070515992182 </div>
+                                    <div class="col-sm-1">MB</div>
+                                    <div class="col-sm-1" style="background-color:lavender;">21-June-2017</div>
+                                    <div class="col-sm-2">Azure App Service </div>
+                                    <div class="col-sm-1" style="background-color:lavender;">1-June-2017</div>
+                                    <div class="col-sm-1">15</div>
+                                    <div class="col-sm-1" style="background-color:lavender;">20 </div>
+                                    <div class="col-sm-1">No</div>
+                                    <div class="col-sm-2">Amit Tripathi</div>
+                                    <div class="col-sm-1" style="background-color:lavender;">Completed</div>
+
+                                </div>
+                            </a>
+                            <a class="list-group-item" href="#">
+                                <div class="row" style="margin-top:5px; ">
+                                    <div class="col-sm-1" style="background-color:lavender;">117070515992182 </div>
+                                    <div class="col-sm-1">MB</div>
+                                    <div class="col-sm-1" style="background-color:lavender;">21-June-2017</div>
+                                    <div class="col-sm-2">Azure App Service </div>
+                                    <div class="col-sm-1" style="background-color:lavender;">1-June-2017</div>
+                                    <div class="col-sm-1">15</div>
+                                    <div class="col-sm-1" style="background-color:lavender;">20 </div>
+                                    <div class="col-sm-1">No</div>
+                                    <div class="col-sm-2">Amit Tripathi</div>
+                                    <div class="col-sm-1" style="background-color:lavender;">Completed</div>
+
+                                </div>
+                            </a>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-9" style="float:left">
+                    Showing 1 to 10 of 15 entries
+                </div>
+                <div class="col-md-3" style="float:right">
+                    <button type="button" class="btn btn-default" style="float:right">Refresh</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
