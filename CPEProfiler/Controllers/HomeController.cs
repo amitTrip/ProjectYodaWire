@@ -13,6 +13,18 @@ namespace CPEProfiler.Controllers
             return View();
         }
 
+        public ActionResult Test()
+        {
+            return View();
+        }
+
+        public ActionResult GetData()
+        {
+
+            return View();
+        }
+
+
         public ActionResult About()
         {
             ViewBag.Message = "Your application description page.";
@@ -26,5 +38,12 @@ namespace CPEProfiler.Controllers
 
             return View();
         }
+    }
+
+    class data
+    {
+        public int Message { get; set; }
+        public int Count { get; set; }
+
     }
 }

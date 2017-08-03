@@ -1,0 +1,591 @@
+﻿@*<script src="~/Scripts/jquery-1.7.1.js"></script>*@
+@*<script src="~/Scripts/jquery-ui-1.8.20.js"></script>*@
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script src="~/Scripts/jquery.html-svg-connect.js"></script>
+
+
+<style>
+    .draggable {
+        cursor: move;
+    }
+</style>
+
+<style>
+   
+
+   
+   
+
+   
+    #teal {
+        width: 6em;
+        height: 6em;
+        background-color: teal;
+        margin-left: 10%;
+    }
+
+    #orange {
+        height: 4em;
+        width: 35%;
+        padding: 2em 8em;
+        margin-left: 15em;
+        margin-top: 6em;
+        background-color: orange;
+    }
+
+    #red {
+        width: 6em;
+        height: 4em;
+        margin-left: 40%;
+        padding: 4em 3em;
+        background-color: red;
+    }
+
+    #aqua {
+        width: 5em;
+        height: 5em;
+        margin-left: 10%;
+        background-color: aqua;
+    }
+
+    #purple {
+        width: 9em;
+        height: 5em;
+        background-color: purple;
+    }
+
+    #green {
+        width: 5em;
+        height: 7em;
+        margin-top: 2em;
+        margin-left: 50%;
+        background-color: green;
+    }
+
+    .dashed-blue {
+        stroke-dasharray: 10px;
+        stroke: blue;
+    }
+</style>
+
+<script type="text/javascript">
+      var svgNS = "http://www.w3.org/2000/svg";
+      oldstat = null;
+      activeDashboards = 0;
+      oldCarPos = 0;
+      level = 1;
+      threshholdHeight = 500;
+      threshholdWidth = 1200;
+      MaxChild = 1;
+      MaxDepth = 1;
+
+      var selectedElement = 0;
+      var currentX = 0;
+      var currentY = 0;
+      var currentMatrix = 0;
+
+      function selectElement(evt) {
+          selectedElement = evt.target;
+          currentX = evt.clientX;
+          currentY = evt.clientY;
+          selectedElement.setAttributeNS(null, "style", "z-index: 100000");
+
+          currentMatrix = selectedElement.getAttributeNS(null, "transform").slice(7, -1).split(' ');
+
+          for (var i = 0; i < currentMatrix.length; i++) {
+              currentMatrix[i] = parseFloat(currentMatrix[i]);
+          }
+
+          selectedElement.setAttributeNS(null, "onmousemove", "moveElement(evt)");
+      }
+
+      function deselectElement(evt) {
+          if (selectedElement != 0) {
+              selectedElement.removeAttributeNS(null, "onmousemove");
+              selectedElement.removeAttributeNS(null, "style");
+              selectedElement = 0;
+              console.log("deselet Fiered "+ selectedElement);
+          }
+      }
+
+      function moveElement(evt) {
+          dx = evt.clientX - currentX;
+          dy = evt.clientY - currentY;
+          currentMatrix[4] += dx;
+          currentMatrix[5] += dy;
+          newMatrix = "matrix(" + currentMatrix.join(' ') + ")";
+
+          selectedElement.setAttributeNS(null, "transform", newMatrix);
+          currentX = evt.clientX;
+          currentY = evt.clientY;
+      }
+
+      function Clear() {
+
+          for (i = 0 ; i <= activeDashboards ; i++) {
+              var ele = svgDocument.getElementById("SmallRect" + i);
+              var parent = ele.parentNode;
+              parent.removeChild(ele);
+
+              var ele = svgDocument.getElementById("sbox" + i);
+              var parent = ele.parentNode;
+              parent.removeChild(ele);
+
+              var ele = svgDocument.getElementById("Supbox" + i);
+              var parent = ele.parentNode;
+              parent.removeChild(ele);
+
+              var ele = svgDocument.getElementById("statusBox" + i);
+              var parent = ele.parentNode;
+              parent.removeChild(ele);
+          }
+
+          var ele = svgDocument.getElementById("moveSquare");
+          var parent = ele.parentNode;
+          parent.removeChild(ele);
+
+
+          var infoConsole = document.getElementById("divPopup");
+          infoConsole.innerHTML = "";
+          //DashCreate();
+          //SetCarLocation();
+      }
+      function SetCarLocation()// update this to move car to intial location
+      {
+          var ele = svgDocument.getElementById("image");
+          ele.setAttributeNS(null, "x", 20);
+          ele.setAttributeNS(null, "y", 270);
+
+      }
+      function foo(evt) {
+          var target = evt.target;
+          if (oldstat == null) {
+              var target = evt.target;
+              var data = target.getAttributeNS(null, "data");
+              target.setAttributeNS(null, "fill", "silver");
+              var infoConsole = document.getElementById("divPopup");
+              infoConsole.innerHTML = data;
+              oldstat = target;
+          }
+          else {
+              oldstat.setAttributeNS(null, "fill", "green");
+              var data = target.getAttributeNS(null, "data");
+              target.setAttributeNS(null, "fill", "silver");
+              var infoConsole = document.getElementById("divPopup");
+              infoConsole.innerHTML = data;
+          }
+          oldstat = target;
+
+          var ele = svgDocument.getElementById("moveSquare");
+          var fromloc = target.getAttributeNS(null, "x");
+          ele.setAttributeNS(null, "x", fromloc - 40);
+
+          var ele = svgDocument.getElementById("image");
+          var Toloc = target.getAttributeNS(null, "x");
+
+          //alert(oldCarPos); alert(Toloc);
+          //ele.setAttributeNS(null, "x", fromloc-40);
+          var fromX = ele.getAttributeNS(null, "x");
+
+          var toLoc = Toloc - 80;
+
+
+
+          fromX = oldCarPos;
+
+
+          MoveCar(ele, fromX, toLoc);
+          oldCarPos = Toloc;
+
+      }
+      function drawPath() {
+          // used to draw road dynamic length
+          var Element = document.getElementById("dumpAnalyzer");
+          var length = Element.getAttributeNS(null, "width");
+
+          var rectS = document.createElementNS(svgNS, "rect");// draw road
+          rectS.setAttributeNS(null, "x", 15);
+          rectS.setAttributeNS(null, "id", "Road");
+          rectS.setAttributeNS(null, "y", 302);
+          rectS.setAttributeNS(null, "width", length + 50);
+          rectS.setAttributeNS(null, "height", 76);
+          rectS.setAttributeNS(null, "rx", 0);
+          rectS.setAttributeNS(null, "ry", 0);
+          rectS.setAttributeNS(null, "fill", "rgb(128, 128, 128)");
+          rectS.setAttributeNS(null, "stroke", "red");
+document.getElementById("dumpAnalyzer").appendChild(rectS);
+
+          for (i = 20 ; i < length; i += 100) {
+              var myCircle = document.createElementNS(svgNS, "rect"); //draw strips white
+              myCircle.setAttributeNS(null, "x", i);
+              myCircle.setAttributeNS(null, "y", 330);
+              myCircle.setAttributeNS(null, "width", 80);
+              myCircle.setAttributeNS(null, "height", 20);
+              myCircle.setAttributeNS(null, "rx", 0);
+              myCircle.setAttributeNS(null, "ry", 0);
+              myCircle.setAttributeNS(null, "fill", "white");
+              myCircle.setAttributeNS(null, "stroke", "none");
+document.getElementById("dumpAnalyzer").appendChild(myCircle);
+          }
+
+      }
+      function DrawDashBoard(data) {
+          alert("data" + data);
+          alert("data" + data.lenght );
+          var loc = 0;
+          var w = 150;
+          var Pad = 70;
+          for (i = 0; i < data.length ; i++) {
+              activeDashboards = i;
+
+              if (i == 0) { loc = 100; }
+              else { loc = w + Pad + loc; }
+            
+              var myCircle = document.createElementNS(svgNS, "rect"); //To create status rect
+              myCircle.setAttributeNS(null, "x", loc);
+              myCircle.setAttributeNS(null, "y", 60);
+              myCircle.setAttributeNS(null, "id", "statusBox" + i);
+              myCircle.setAttributeNS(null, "width", 150);
+              myCircle.setAttributeNS(null, "height", 80);
+              myCircle.setAttributeNS(null, "rx", 0);
+              myCircle.setAttributeNS(null, "ry", 0);
+              myCircle.setAttributeNS(null, "fill", "rgb(47, 130, 50)");
+              myCircle.setAttributeNS(null, "stroke", "silver");
+              myCircle.setAttributeNS(null, "data", data[i]["Message"] + " Count : " + data[i]["Count"]);
+             // myCircle.setAttributeNS(null, "data", data.Message + " Count : " + data.Count);
+
+              myCircle.addEventListener("click", foo, false);
+document.getElementById("dumpAnalyzer").appendChild(myCircle);
+
+              var textStat = document.createElementNS(svgNS, "text"); // To generate text in status box
+              textStat.setAttributeNS(null, "x", loc + 50);
+              textStat.setAttributeNS(null, "id", "sbox" + i);
+              textStat.setAttributeNS(null, "y", 100);
+              textStat.setAttributeNS(null, "fill", "white");
+              textStat.setAttributeNS(null, "stroke", "white");
+               var textNode = document.createTextNode(data[i]["Message"]);
+              //var textNode = document.createTextNode(data.Message);
+              textStat.appendChild(textNode);
+document.getElementById("dumpAnalyzer").appendChild(textStat);
+
+              var rectS = document.createElementNS(svgNS, "rect"); // creare small rectangle
+              rectS.setAttributeNS(null, "x", loc + 45);
+              rectS.setAttributeNS(null, "id", "SmallRect" + i);
+              rectS.setAttributeNS(null, "y", 140);
+              rectS.setAttributeNS(null, "width", 60);
+              rectS.setAttributeNS(null, "height", 20);
+              rectS.setAttributeNS(null, "rx", 0);
+              rectS.setAttributeNS(null, "ry", 0);
+              rectS.setAttributeNS(null, "fill", "rgba(239, 230, 230, 0.92)");
+              rectS.setAttributeNS(null, "stroke", "silver");
+document.getElementById("dumpAnalyzer").appendChild(rectS);
+
+              var rectBar = document.createElementNS(svgNS, "rect"); // create support bars
+              rectBar.setAttributeNS(null, "x", loc + 65);
+              rectBar.setAttributeNS(null, "y", 160);
+              rectBar.setAttributeNS(null, "id", "Supbox" + i);
+              rectBar.setAttributeNS(null, "width", 20);
+              rectBar.setAttributeNS(null, "height", 140);
+              rectBar.setAttributeNS(null, "rx", 0);
+              rectBar.setAttributeNS(null, "ry", 0);
+              rectBar.setAttributeNS(null, "fill", "rgb(121, 43, 43)");
+              rectBar.setAttributeNS(null, "stroke", "silver");
+document.getElementById("dumpAnalyzer").appendChild(rectBar);
+
+          }
+          DrawCar();
+      }
+      function MoveCar(target, from, To) {
+          // create the move animation
+          var animation = document.createElementNS('http://www.w3.org/2000/svg', 'animateMotion');
+          //animation.setAttributeNS(null, 'attributeName', 'fill-opacity');
+          animation.setAttributeNS(null, 'begin', 'indefinite');
+          animation.setAttributeNS(null, 'to', To + ",0");
+          animation.setAttributeNS(null, 'from', from + ",0");
+          animation.setAttributeNS(null, 'dur', 3);
+          animation.setAttributeNS(null, 'fill', 'freeze');
+          // link the animation to the target
+          target.appendChild(animation);
+          // start the animation
+          animation.beginElement();
+      }
+      function DrawCar() {
+          var rectS = document.createElementNS(svgNS, "rect");
+          rectS.setAttributeNS(null, "x", 50);
+          rectS.setAttributeNS(null, "id", "moveSquare");
+          rectS.setAttributeNS(null, "y", 250);
+          rectS.setAttributeNS(null, "width", 150);
+          rectS.setAttributeNS(null, "height", 80);
+          rectS.setAttributeNS(null, "rx", 0);
+          rectS.setAttributeNS(null, "ry", 0);
+          rectS.setAttributeNS(null, "fill", "none");
+          rectS.setAttributeNS(null, "stroke", "none");
+          document.getElementById("dumpAnalyzer").appendChild(rectS);
+          svgDocument = document.getElementById("dumpAnalyzer");
+           
+
+          var ele = svgDocument.getElementById("image");
+          var parent = ele.parentNode;
+          parent.removeChild(ele);
+          parent.appendChild(ele);
+
+      }
+      function defaultStatusSelect() {
+          var RandomStat = 4;
+          svgDocument = document.getElementById("dumpAnalyzer");
+          var element = svgDocument.getElementById("statusBox" + RandomStat);
+          var loc = element.getAttributeNS(null, "x");
+          var ele = svgDocument.getElementById("image");
+          MoveCar(ele, 0, loc);
+      }
+      function createDynamicContainer(x,y,l,h) {
+          var Element = document.getElementById("dumpAnalyzer");
+          var length = Element.getAttributeNS(null, "width");
+          var rectS = document.createElementNS(svgNS, "rect");
+
+        //  alert("child" + l);
+          if(x==15 && y==15)
+          {       
+              rectS.setAttributeNS(null, "id", "Level" + level);
+              child = 6;
+          }
+          else
+          {
+              level++;             
+              rectS.setAttributeNS(null, "id", "Level" + level);      
+          }
+          
+          rectS.setAttributeNS(null, "rx", 10);
+          rectS.setAttributeNS(null, "ry", 10);
+          rectS.setAttributeNS(null, "fill", "rgb(47, 130, 50)");
+          rectS.setAttributeNS(null, "stroke", "red");
+          rectS.addEventListener("dblclick", eventHandler, false);
+          rectS.setAttributeNS(null, "x", x);
+          rectS.setAttributeNS(null, "y", y);
+          rectS.setAttributeNS(null, "width", l);
+          rectS.setAttributeNS(null, "height", h);
+          rectS.setAttributeNS(null, "Child", child);
+          rectS.setAttributeNS(null, "class", "draggable");
+          rectS.setAttributeNS(null, "transform", "matrix(1 0 0 1 0 0)");
+    
+          rectS.setAttributeNS(null, "onmousedown", "selectElement(evt)");
+         
+          rectS.setAttributeNS(null, "onmouseup", "deselectElement(evt)");
+       
+          incremenetSvgBox( x , y );
+          document.getElementById("dumpAnalyzer").appendChild(rectS);    
+      }
+      function eventHandler(evt) {                      
+          var target = evt.target;
+          var child = target.getAttributeNS(null, "Child");
+
+          if (child > MaxChild)
+          {
+              MaxChild = child;
+          }
+
+
+          if (child > 1) {        
+              for (i = 0; i < child * 1; i++) {                
+                createDynamicContainer((target.getAttributeNS(null, "x") * 1 + 300), (target.getAttributeNS(null, "y") * 1 + i*450/child), 240, 440 / child);          
+              }
+          }
+          else
+          {
+              var newelement= createDynamicContainer(target.getAttributeNS(null, "x") * 1 + 300, target.getAttributeNS(null, "y"), 240, 450);           
+          }
+
+         
+      }
+
+      function incremenetSvgBox(x, y)
+      {
+          if (level>1) {
+            
+              var Element = document.getElementById("dumpAnalyzer");
+              var length = Element.getAttributeNS(null, "width");
+              var height = Element.getAttributeNS(null, "height");
+
+            
+
+              if (x+350  > threshholdWidth) {
+                  Element.setAttributeNS(null, "width", length * 1 + 350);
+              }
+
+              /*fix this */
+              if ( y + 250 > threshholdHeight) {
+                  Element.setAttributeNS(null, "height", y * 1 + 250);
+              }             
+          }
+      }
+
+      function drawConnector() {
+
+
+          $("#dumpAnalyzer").HTMLSVGconnect({
+              stroke: "#000",
+              strokeWidth: 8,
+              orientation: "auto",
+              class: "my-path",
+              paths: [
+                { start: "#red", end: "#aqua", strokeWidth: 12, offset: 20, class: "dashed-blue" },
+                { start: "#purple", end: "#green", stroke: "red" },
+                { start: "#red", end: "#green", stroke: "red" }
+              ]
+          });
+
+
+          rectS = document.getElementById("red");
+         
+          rectS.setAttributeNS(null, "class", "draggable");
+          rectS.setAttributeNS(null, "transform", "matrix(1 0 0 1 0 0)");
+
+          rectS.setAttributeNS(null, "onmousedown", "selectElement(evt)");
+
+          rectS.setAttributeNS(null, "onmouseup", "deselectElement(evt)");
+
+      }
+  
+</script>
+
+<script type="text/javascript">
+    // this function is used to call users action method and provide data object wihich
+    // renders all the svg / javascript document..
+
+
+    jQuery(document).ready(function ($) {
+
+        createDynamicContainer(15, 15, 240, 450);
+        var infoConsole = document.getElementById("divPopup");
+        infoConsole.innerHTML = "";    
+    });
+
+
+
+    function DashCreate() {
+
+        drawPath();
+        var item = {
+
+            Message: "India",
+            Count :"20"
+
+        }
+        var data = new Array();
+        data.push(item);
+        data.push(item);
+        data.push(item);
+        data.push(item);
+        data.push(item);
+        data.push(item);
+        var width;
+        var TexBox = document.getElementById('InRepetImg');
+        p = TexBox.value;
+        if (isNaN(p) || p == 0 || p < 0) {
+            p = 4;
+        }
+
+        if (p < 4) {
+            width = 900;
+        }
+        else {
+            width = 230 * p;
+        }
+
+        var Element = document.getElementById("dumpAnalyzer");
+        Element.setAttributeNS(null, "width", width)
+        DrawDashBoard(data);
+    }
+</script>
+
+Enter Repeat Count : <input type="text" id="InRepetImg" name="RejectText" value="" style="height:20px; width:120px;" />
+    <button id="but" onclick ="Clear()">Refresh DashBoard</button>
+
+<div id="virtualDumpDashView" style="width:99%; height:720px;overflow:auto; background-color:white;padding:0px; margin:0 auto 0 auto; border:1px solid silver">
+  <div id="MapInfoContainer" style="float:left; width:19%;margin:0px;  padding: 0.5% ; padding-top:5px; padding-bottom:5px;  min-height:480px;background-color:black; position:relative;  overflow:auto">
+        <div id="MapInfo" style="float:left; width:100%; min-height:490px; height:99%;   margin:0px; background-color:aliceblue; position:relative;  overflow:auto">
+            <div id="MapInfoHeader" style="float:left; width:100%;margin:0px;  text-align:center; min-height:19px;background-color:greenyellow; position:relative; ">
+                Dump Details
+            </div>
+            <div id="MapInfoToolBox" style="float:left; width:100%;margin:0px;  text-align:center; min-height:29px;background-color:silver; position:relative;  ">
+                <ul style="list-style:none; list-style-position:outside; margin-left:0px; float:left ;   ">
+                    <li style="display:inline;">Layers</li>
+                    <li style="display:inline;">Data</li>
+                    <li style="display:inline;">Tables</li>
+                    <li style="display:inline;">Options</li>
+                </ul>
+            </div>
+            <div id="MapInfoContent" style="float:left; width:100%;margin:0px;  text-align:center; min-height:312px;background-color:whitesmoke; position:relative; ">
+                <div style="width:100%; background-color:black; min-height:10px;color:white"> Properties </div>
+
+                <div style="width:100%; background-color:black; min-height:342px; overflow:scroll;min-height:302px; background-color:white; "> Layers</div>
+            </div>
+            <div id="MapLocInfo" style="float:left; width:100%;margin:0px;  text-align:center; min-height:100px;background-color:white; position:relative; overflow:auto">
+                <div style="width:100%; background-color:black; color:white"> Errors </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="MapContainer" style="width:79%; padding:0.5%;padding-top:5px; padding-bottom:5px; float:right; position:relative; background-color:whitesmoke; height:auto">
+        <div class="MapView" style="width:100%; min-height:490px; float:right; position:relative; background-color:white; height:auto">
+            <div id="dumpAnalyzerViewHeader" style="float:left; width:100%;margin:0px;  text-align:center; min-height:19px;background-color:greenyellow; position:relative; overflow:auto">
+               Virtual Dump Analyzer
+            </div>
+            <div id="galaxyToolBox" style="float:left; width:100%;margin:0px;  text-align:center; min-height:70px;background-color:silver; position:relative; overflow:auto">
+                Maping Tool Bar
+            </div>
+
+            <div id="dumpAnalyzerViewport" style="width:100%; height:580px;margin:0px; overflow:scroll; padding:0px;margin:0px; float:left;position:relative;">
+                <svg id="dumpAnalyzer" height="500" width="1150" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" version="1.1" onload="init(evt)" style=" overflow: visible">
+                    <script type="text/ecmascript">
+                        <![CDATA[
+                           function init(evt) {
+                               if (window.svgDocument == null) {
+                                   svgDocument = evt.target.ownerDocument;
+
+                               }
+                           }
+
+                        ]]>
+                    </script>
+
+
+                   @*<rect class="draggable" id="aqua"
+                          x="30" y="30"
+                          width="80" height="80"
+                          fill="blue"
+                          transform="matrix(1 0 0 1 0 0)"
+                          onmousedown="selectElement(evt)" />
+
+                    <rect class="draggable" id="red"
+                          x="300" y="100"
+                          width="80" height="80"
+                          fill="blue"
+                          transform="matrix(1 0 0 1 0 0)"
+                          onmousedown="selectElement(evt)" />
+
+
+                    <div id="outer">
+                        <div id="green" style="margin-bottom: 100px; margin-left: 200px;"></div>
+                        <div id="purple"></div>
+                    </div>
+
+                    *@
+                </svg>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div style="width:99%;margin-top:10px; height:120px;background-color:white;padding:0px; border:1px solid silver">
+        <div  style="float:left; width:100%;margin:0px; border-right:1px solid silver; text-align:center; min-height:20px;background-color:greenyellow; position:relative; overflow:auto">
+                 Information Console
+        </div>
+        <div id ="divPopup" style="width:900px;margin-top:10px;padding:20px; " >
+
+        </div>
+        <div style="width:200px;height:200px">
+</div>
+</div> 
